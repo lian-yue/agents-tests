@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>鹈鹕骑自行车</title>
+<style>
+  html, body { height: 100%; margin: 0; background: #8ecae6; }
+  body { display: grid; place-items: center; }
+  svg { width: min(980px, 100%); height: auto; display: block; }
+  .cloud { animation: drift 46s linear infinite; }
+  .hill { animation: drift 26s linear infinite; }
+  .dash { animation: drift 2s linear infinite; }
+  .spin { transform-box: fill-box; transform-origin: center; animation: spin 0.7s linear infinite; }
+  .crank { transform-box: fill-box; transform-origin: center; animation: spin 1.2s linear infinite; }
+  .stay { transform-box: fill-box; transform-origin: center; animation: spin 1.2s linear infinite reverse; }
+  .bob { animation: bob 0.6s ease-in-out infinite; }
+  .wing { transform-box: fill-box; transform-origin: 80% 50%; animation: flap 0.7s ease-in-out infinite; }
+  .pouch { transform-box: fill-box; transform-origin: 0 0; animation: sag 1.2s ease-in-out infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  @keyframes drift { from { transform: translateX(0); } to { transform: translateX(-960px); } }
+  @keyframes bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(5px); } }
+  @keyframes flap { 0%, 100% { transform: rotate(8deg); } 50% { transform: rotate(-24deg); } }
+  @keyframes sag { 0%, 100% { transform: scaleY(1); } 50% { transform: scaleY(1.08); } }
+</style>
+</head>
+<body>
+<svg viewBox="0 0 960 540" role="img" aria-label="鹈鹕骑自行车">
+  <title>鹈鹕骑自行车</title>
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#7ec8e3"/>
+      <stop offset="1" stop-color="#e8f6ff"/>
+    </linearGradient>
+    <linearGradient id="beak" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#f4b000"/>
+      <stop offset="1" stop-color="#ffcf70"/>
+    </linearGradient>
+  </defs>
+  <rect width="960" height="540" fill="url(#sky)"/>
+  <circle cx="780" cy="90" r="42" fill="#ffe08a"/>
+  <g class="cloud">
+    <g fill="#fff" opacity="0.92">
+      <ellipse cx="140" cy="110" rx="48" ry="22"/>
+      <ellipse cx="178" cy="102" rx="34" ry="20"/>
+      <ellipse cx="108" cy="108" rx="26" ry="16"/>
+      <ellipse cx="430" cy="78" rx="40" ry="18"/>
+      <ellipse cx="462" cy="70" rx="28" ry="16"/>
+      <ellipse cx="700" cy="140" rx="52" ry="20"/>
+      <ellipse cx="748" cy="132" rx="30" ry="16"/>
+    </g>
+    <g fill="#fff" opacity="0.92" transform="translate(960 0)">
+      <ellipse cx="140" cy="110" rx="48" ry="22"/>
+      <ellipse cx="178" cy="102" rx="34" ry="20"/>
+      <ellipse cx="108" cy="108" rx="26" ry="16"/>
+      <ellipse cx="430" cy="78" rx="40" ry="18"/>
+      <ellipse cx="462" cy="70" rx="28" ry="16"/>
+      <ellipse cx="700" cy="140" rx="52" ry="20"/>
+      <ellipse cx="748" cy="132" rx="30" ry="16"/>
+    </g>
+  </g>
+  <g class="hill" fill="#8fbf7a">
+    <path d="M0 360 C80 320 140 340 220 330 C320 316 380 350 480 338 C600 322 680 348 780 332 C860 322 920 340 960 336 L960 430 L0 430 Z"/>
+    <path d="M960 360 C1040 320 1100 340 1180 330 C1280 316 1340 350 1440 338 C1560 322 1640 348 1740 332 C1820 322 1880 340 1920 336 L1920 430 L960 430 Z"/>
+  </g>
+  <rect y="400" width="960" height="140" fill="#d7c4a3"/>
+  <g class="dash" stroke="#fff" stroke-width="6" stroke-linecap="round" opacity="0.9">
+    <path d="M0 448 H70 M130 448 H200 M260 448 H330 M390 448 H460 M520 448 H590 M650 448 H720 M780 448 H850 M910 448 H980"/>
+    <path d="M960 448 H1030 M1090 448 H1160 M1220 448 H1290 M1350 448 H1420 M1480 448 H1550 M1610 448 H1680 M1740 448 H1810 M1870 448 H1940"/>
+  </g>
+  <ellipse cx="390" cy="468" rx="150" ry="12" fill="#000" opacity="0.12"/>
+  <g class="bob">
+    <g fill="none" stroke="#243044" stroke-width="7" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M200 400 L310 378 L268 292 L430 268 L480 400"/>
+      <path d="M310 378 L200 400"/>
+      <path d="M430 268 L448 236"/>
+    </g>
+    <path d="M430 250 q28 -8 36 10" fill="none" stroke="#243044" stroke-width="6" stroke-linecap="round"/>
+    <circle cx="456" cy="228" r="7" fill="#e07a3d"/>
+    <rect x="252" y="280" width="36" height="10" rx="4" fill="#8a6232"/>
+    <g transform="translate(200 400)">
+      <circle r="50" fill="none" stroke="#222" stroke-width="12"/>
+      <circle r="38" fill="none" stroke="#d5dde3" stroke-width="4"/>
+      <g class="spin">
+        <path d="M0 -32 V32 M-32 0 H32 M-22 -22 L22 22 M-22 22 L22 -22" stroke="#9aa6b2" stroke-width="3"/>
+      </g>
+      <circle r="7" fill="#8a6232"/>
+    </g>
+    <g transform="translate(480 400)">
+      <circle r="50" fill="none" stroke="#222" stroke-width="12"/>
+      <circle r="38" fill="none" stroke="#d5dde3" stroke-width="4"/>
+      <g class="spin">
+        <path d="M0 -32 V32 M-32 0 H32 M-22 -22 L22 22 M-22 22 L22 -22" stroke="#9aa6b2" stroke-width="3"/>
+      </g>
+      <circle r="7" fill="#8a6232"/>
+    </g>
+    <g transform="translate(310 378)">
+      <circle r="16" fill="none" stroke="#243044" stroke-width="5"/>
+      <g class="crank">
+        <path d="M0 -26 V26" stroke="#243044" stroke-width="5" stroke-linecap="round"/>
+        <g transform="translate(0 -26)"><g class="stay"><rect x="-10" y="-4" width="20" height="8" rx="2" fill="#5c6670"/></g></g>
+        <g transform="translate(0 26)"><g class="stay"><rect x="-10" y="-4" width="20" height="8" rx="2" fill="#5c6670"/></g></g>
+      </g>
+    </g>
+    <g class="wing">
+      <ellipse cx="250" cy="236" rx="62" ry="28" fill="#d7d1c6" transform="rotate(-12 250 236)"/>
+    </g>
+    <ellipse cx="278" cy="228" rx="58" ry="40" fill="#f7f5f0"/>
+    <path d="M230 240 q-28 8 -18 24 q16 4 34 -8" fill="#f7f5f0"/>
+    <path d="M214 232 l-22 6 M214 244 l-26 2 M220 256 l-18 8" stroke="#c8c2b6" stroke-width="3" stroke-linecap="round"/>
+    <path d="M320 214 q18 -36 52 -42" fill="none" stroke="#f7f5f0" stroke-width="16" stroke-linecap="round"/>
+    <circle cx="374" cy="168" r="22" fill="#f7f5f0"/>
+    <circle cx="382" cy="164" r="4.5" fill="#1c1915"/>
+    <circle cx="383.5" cy="162.5" r="1.4" fill="#fff"/>
+    <path d="M392 170 L520 158 L392 180 Z" fill="url(#beak)"/>
+    <path class="pouch" d="M394 180 Q450 214 508 166 Q450 188 394 176 Z" fill="#f3c48a"/>
+    <line x1="292" y1="292" stroke="#e07a3d" stroke-width="8" stroke-linecap="round">
+      <animate attributeName="x2" dur="1.2s" repeatCount="indefinite" values="310.0;323.0;332.5;336.0;332.5;323.0;310.0;297.0;287.5;284.0;287.5;297.0;310.0"/>
+      <animate attributeName="y2" dur="1.2s" repeatCount="indefinite" values="352.0;355.5;365.0;378.0;391.0;400.5;404.0;400.5;391.0;378.0;365.0;355.5;352.0"/>
+    </line>
+    <line x1="318" y1="296" stroke="#c9652f" stroke-width="8" stroke-linecap="round">
+      <animate attributeName="x2" dur="1.2s" repeatCount="indefinite" values="310.0;297.0;287.5;284.0;287.5;297.0;310.0;323.0;332.5;336.0;332.5;323.0;310.0"/>
+      <animate attributeName="y2" dur="1.2s" repeatCount="indefinite" values="404.0;400.5;391.0;378.0;365.0;355.5;352.0;355.5;365.0;378.0;391.0;400.5;404.0"/>
+    </line>
+    <ellipse rx="11" ry="5" fill="#e07a3d">
+      <animate attributeName="cx" dur="1.2s" repeatCount="indefinite" values="310.0;323.0;332.5;336.0;332.5;323.0;310.0;297.0;287.5;284.0;287.5;297.0;310.0"/>
+      <animate attributeName="cy" dur="1.2s" repeatCount="indefinite" values="352.0;355.5;365.0;378.0;391.0;400.5;404.0;400.5;391.0;378.0;365.0;355.5;352.0"/>
+    </ellipse>
+    <ellipse rx="11" ry="5" fill="#c9652f">
+      <animate attributeName="cx" dur="1.2s" repeatCount="indefinite" values="310.0;297.0;287.5;284.0;287.5;297.0;310.0;323.0;332.5;336.0;332.5;323.0;310.0"/>
+      <animate attributeName="cy" dur="1.2s" repeatCount="indefinite" values="404.0;400.5;391.0;378.0;365.0;355.5;352.0;355.5;365.0;378.0;391.0;400.5;404.0"/>
+    </ellipse>
+  </g>
+</svg>
+</body>
+</html>
