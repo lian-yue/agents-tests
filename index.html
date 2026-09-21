@@ -59,7 +59,7 @@
     flex-wrap: wrap;
     align-items: center;
     gap: 8px;
-    margin-bottom: 12px;
+    margin-bottom: 8px;
   }
   label { color: var(--muted); font-size: 14px; }
   input[type="search"] {
@@ -124,6 +124,7 @@
   ul { margin: 0; padding-left: 18px; }
   li { margin: 6px 0; }
   .path { color: var(--muted); font-size: 12px; }
+  #filterState { margin: 0 0 12px; }
 </style>
 </head>
 <body>
@@ -143,8 +144,8 @@
       <label for="q">Filter</label>
       <input id="q" type="search" placeholder="Model, version, date, language, or test" autocomplete="off">
       <button type="button" id="clear">Clear</button>
-      <span id="filterState" class="path"></span>
     </div>
+    <p id="filterState" class="path"></p>
     <div class="table-wrap">
       <table>
         <thead>
