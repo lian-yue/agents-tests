@@ -34,8 +34,9 @@ grok/4.7/20260922/zh/qin-shihuang-assembly.1790011920.md
 - The date directory is `YYYYMMDD`, exact to the day, such as `20260922`. Do not use Chinese date words or English month names.
 - `language` is the language code of the original prompt and reply, lowercase, such as `zh`, `en`, or `ja`.
 - The html file and the md file share the same unix timestamp, so two tests on the same day do not overwrite each other.
-- The html file is the page under test.
+- The html file is the page under test. The index opens it directly.
 - The md file states the number of rounds. Every round includes the original prompt and the original agent reply. Do not translate them.
+- The index "Record" link opens the formatted GitHub page, `https://github.com/lian-yue/agents-tests/blob/main/` plus the md path. Do not link the record to the raw Pages file.
 - This README and `index.html` stay in English.
 - After adding a test, add that row to the list in `index.html`.
 
