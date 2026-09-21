@@ -137,12 +137,12 @@
 </header>
 <main>
   <p class="summary" id="summary"></p>
-  <p class="path">Path: model/version/speed/YYYYMMDD/language/name.unix.html</p>
+  <p class="path">Path: model/version/depth/speed/source/driver/YYYYMMDD/language/name.unix.html</p>
   <section id="all">
     <h2>All tests</h2>
     <div class="tools">
       <label for="q">Filter</label>
-      <input id="q" type="search" placeholder="Model, version, speed, date, language, or test" autocomplete="off">
+      <input id="q" type="search" placeholder="Model, version, depth, speed, source, driver, date, language, or test" autocomplete="off">
       <button type="button" id="clear">Clear</button>
     </div>
     <p id="filterState" class="path"></p>
@@ -152,7 +152,10 @@
           <tr>
             <th><button type="button" data-key="model">Model</button></th>
             <th><button type="button" data-key="version">Version</button></th>
+            <th><button type="button" data-key="depth">Depth</button></th>
             <th><button type="button" data-key="speed">Speed</button></th>
+            <th><button type="button" data-key="source">Source</button></th>
+            <th><button type="button" data-key="driver">Driver</button></th>
             <th><button type="button" data-key="date">Date</button></th>
             <th><button type="button" data-key="language">Language</button></th>
             <th><button type="button" data-key="name">Test</button></th>
@@ -173,29 +176,35 @@
     {
       model: "Grok",
       version: "4.7",
-      speed: "none",
+      depth: "high",
+      speed: "normal",
+      source: "subscription",
+      driver: "grokbuild",
       date: "20260922",
       language: "zh",
       name: "秦始皇在现代流水线上打螺丝",
-      href: "grok/4.7/none/20260922/zh/qin-shihuang-assembly.1790011920.html",
-      record: "https://github.com/lian-yue/agents-tests/blob/main/grok/4.7/none/20260922/zh/qin-shihuang-assembly.1790011920.md"
+      href: "grok/4.7/high/normal/subscription/grokbuild/20260922/zh/qin-shihuang-assembly.1790011920.html",
+      record: "https://github.com/lian-yue/agents-tests/blob/main/grok/4.7/high/normal/subscription/grokbuild/20260922/zh/qin-shihuang-assembly.1790011920.md"
     },
     {
       model: "Grok",
       version: "4.7",
-      speed: "none",
+      depth: "high",
+      speed: "normal",
+      source: "subscription",
+      driver: "grokbuild",
       date: "20260922",
       language: "zh",
       name: "鹈鹕骑自行车",
-      href: "grok/4.7/none/20260922/zh/pelican-bicycle.1790014503.html",
-      record: "https://github.com/lian-yue/agents-tests/blob/main/grok/4.7/none/20260922/zh/pelican-bicycle.1790014503.md"
+      href: "grok/4.7/high/normal/subscription/grokbuild/20260922/zh/pelican-bicycle.1790014503.html",
+      record: "https://github.com/lian-yue/agents-tests/blob/main/grok/4.7/high/normal/subscription/grokbuild/20260922/zh/pelican-bicycle.1790014503.md"
     }
   ];
 
   var sortKey = "model";
   var sortDir = 1;
-  var facetKeys = ["model", "version", "speed", "date", "language"];
-  var facets = { model: [], version: [], speed: [], date: [], language: [] };
+  var facetKeys = ["model", "version", "depth", "speed", "source", "driver", "date", "language"];
+  var facets = { model: [], version: [], depth: [], speed: [], source: [], driver: [], date: [], language: [] };
   var q = document.getElementById("q");
   var rows = document.getElementById("rows");
   var empty = document.getElementById("empty");
@@ -235,7 +244,7 @@
     if (sortKey === "version") result = compareVersion(a.version, b.version);
     else if (sortKey === "date") result = Number(a.date) - Number(b.date);
     else result = String(a[sortKey]).localeCompare(String(b[sortKey]), "zh");
-    if (result === 0) result = a.model.localeCompare(b.model, "en") || compareVersion(a.version, b.version) || a.speed.localeCompare(b.speed, "en") || (Number(a.date) - Number(b.date)) || a.language.localeCompare(b.language, "en") || a.name.localeCompare(b.name, "zh");
+    if (result === 0) result = a.model.localeCompare(b.model, "en") || compareVersion(a.version, b.version) || a.depth.localeCompare(b.depth, "en") || a.speed.localeCompare(b.speed, "en") || a.source.localeCompare(b.source, "en") || a.driver.localeCompare(b.driver, "en") || (Number(a.date) - Number(b.date)) || a.language.localeCompare(b.language, "en") || a.name.localeCompare(b.name, "zh");
     return result * sortDir;
   }
 
@@ -264,7 +273,7 @@
     return tests.filter(function (item) {
       if (!matchesFacets(item)) return false;
       if (!text) return true;
-      return (item.model + " " + item.version + " " + item.speed + " " + item.date + " " + item.language + " " + item.name + " " + item.href).toLowerCase().indexOf(text) !== -1;
+      return (item.model + " " + item.version + " " + item.depth + " " + item.speed + " " + item.source + " " + item.driver + " " + item.date + " " + item.language + " " + item.name + " " + item.href).toLowerCase().indexOf(text) !== -1;
     }).sort(compare);
   }
 
@@ -278,7 +287,7 @@
     rows.innerHTML = "";
     list.forEach(function (item) {
       var tr = document.createElement("tr");
-      ["model", "version", "speed", "date", "language", "name"].forEach(function (key) {
+      ["model", "version", "depth", "speed", "source", "driver", "date", "language", "name"].forEach(function (key) {
         var td = document.createElement("td");
         if (facets[key]) {
           var facet = document.createElement("button");
@@ -317,14 +326,14 @@
     empty.hidden = list.length !== 0;
     var chosen = [];
     facetKeys.forEach(function (key) {
-      var label = { model: "Model", version: "Version", speed: "Speed", date: "Date", language: "Language" }[key];
+      var label = { model: "Model", version: "Version", depth: "Depth", speed: "Speed", source: "Source", driver: "Driver", date: "Date", language: "Language" }[key];
       facets[key].forEach(function (value) { chosen.push(label + " = " + value); });
     });
     if (text) chosen.push("Text = " + text);
     filterState.textContent = chosen.length ? chosen.join(", ") : "Showing all";
     document.querySelectorAll("th button").forEach(function (button) {
       var key = button.getAttribute("data-key");
-      var label = { model: "Model", version: "Version", speed: "Speed", date: "Date", language: "Language", name: "Test" }[key];
+      var label = { model: "Model", version: "Version", depth: "Depth", speed: "Speed", source: "Source", driver: "Driver", date: "Date", language: "Language", name: "Test" }[key];
       var mark = key === sortKey ? (sortDir > 0 ? " ↑" : " ↓") : "";
       button.textContent = label + mark;
       button.parentElement.setAttribute("aria-sort", key === sortKey ? (sortDir > 0 ? "ascending" : "descending") : "none");
@@ -341,18 +350,33 @@
       }
       var version = model.versions.find(function (entry) { return entry.version === item.version; });
       if (!version) {
-        version = { version: item.version, levels: [] };
+        version = { version: item.version, depths: [] };
         model.versions.push(version);
       }
-      var level = version.levels.find(function (entry) { return entry.speed === item.speed; });
-      if (!level) {
-        level = { speed: item.speed, dates: [] };
-        version.levels.push(level);
+      var depth = version.depths.find(function (entry) { return entry.depth === item.depth; });
+      if (!depth) {
+        depth = { depth: item.depth, speeds: [] };
+        version.depths.push(depth);
       }
-      var day = level.dates.find(function (entry) { return entry.date === item.date; });
+      var speed = depth.speeds.find(function (entry) { return entry.speed === item.speed; });
+      if (!speed) {
+        speed = { speed: item.speed, sources: [] };
+        depth.speeds.push(speed);
+      }
+      var source = speed.sources.find(function (entry) { return entry.source === item.source; });
+      if (!source) {
+        source = { source: item.source, drivers: [] };
+        speed.sources.push(source);
+      }
+      var driver = source.drivers.find(function (entry) { return entry.driver === item.driver; });
+      if (!driver) {
+        driver = { driver: item.driver, dates: [] };
+        source.drivers.push(driver);
+      }
+      var day = driver.dates.find(function (entry) { return entry.date === item.date; });
       if (!day) {
         day = { date: item.date, languages: [] };
-        level.dates.push(day);
+        driver.dates.push(day);
       }
       var language = day.languages.find(function (entry) { return entry.language === item.language; });
       if (!language) {
@@ -365,15 +389,24 @@
     models.forEach(function (model) {
       model.versions.sort(function (a, b) { return compareVersion(a.version, b.version); });
       model.versions.forEach(function (version) {
-        version.levels.sort(function (a, b) { return a.speed.localeCompare(b.speed, "en"); });
-        version.levels.forEach(function (level) {
-        level.dates.sort(function (a, b) { return Number(a.date) - Number(b.date); });
-        level.dates.forEach(function (day) {
-          day.languages.sort(function (a, b) { return a.language.localeCompare(b.language, "en"); });
-          day.languages.forEach(function (language) {
-            language.items.sort(function (a, b) { return a.name.localeCompare(b.name, "zh"); });
+        version.depths.sort(function (a, b) { return a.depth.localeCompare(b.depth, "en"); });
+        version.depths.forEach(function (depth) {
+          depth.speeds.sort(function (a, b) { return a.speed.localeCompare(b.speed, "en"); });
+          depth.speeds.forEach(function (speed) {
+            speed.sources.sort(function (a, b) { return a.source.localeCompare(b.source, "en"); });
+            speed.sources.forEach(function (source) {
+              source.drivers.sort(function (a, b) { return a.driver.localeCompare(b.driver, "en"); });
+              source.drivers.forEach(function (driver) {
+                driver.dates.sort(function (a, b) { return Number(a.date) - Number(b.date); });
+                driver.dates.forEach(function (day) {
+                  day.languages.sort(function (a, b) { return a.language.localeCompare(b.language, "en"); });
+                  day.languages.forEach(function (language) {
+                    language.items.sort(function (a, b) { return a.name.localeCompare(b.name, "zh"); });
+                  });
+                });
+              });
+            });
           });
-        });
         });
       });
     });
@@ -401,31 +434,34 @@
         var heading = document.createElement("h3");
         heading.textContent = version.version;
         block.appendChild(heading);
-        version.levels.forEach(function (level) {
-        var levelTitle = document.createElement("h4");
-        levelTitle.textContent = level.speed;
-        block.appendChild(levelTitle);
-        level.dates.forEach(function (day) {
-          var dayTitle = document.createElement("h4");
-          dayTitle.textContent = day.date;
-          block.appendChild(dayTitle);
-          day.languages.forEach(function (language) {
-            var langTitle = document.createElement("p");
-            langTitle.className = "path";
-            langTitle.textContent = language.language;
-            var list = document.createElement("ul");
-            language.items.forEach(function (item) {
-              var li = document.createElement("li");
-              var link = document.createElement("a");
-              link.href = item.href;
-              link.textContent = item.name;
-              li.appendChild(link);
-              list.appendChild(li);
+        version.depths.forEach(function (depth) {
+          var depthTitle = document.createElement("h4");
+          depthTitle.textContent = depth.depth;
+          block.appendChild(depthTitle);
+          depth.speeds.forEach(function (speed) {
+            speed.sources.forEach(function (source) {
+              source.drivers.forEach(function (driver) {
+                driver.dates.forEach(function (day) {
+                  day.languages.forEach(function (language) {
+                    var meta = document.createElement("p");
+                    meta.className = "path";
+                    meta.textContent = speed.speed + " / " + source.source + " / " + driver.driver + " / " + day.date + " / " + language.language;
+                    var list = document.createElement("ul");
+                    language.items.forEach(function (item) {
+                      var li = document.createElement("li");
+                      var link = document.createElement("a");
+                      link.href = item.href;
+                      link.textContent = item.name;
+                      li.appendChild(link);
+                      list.appendChild(li);
+                    });
+                    block.appendChild(meta);
+                    block.appendChild(list);
+                  });
+                });
+              });
             });
-            block.appendChild(langTitle);
-            block.appendChild(list);
           });
-        });
         });
         section.appendChild(block);
       });
