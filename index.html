@@ -137,12 +137,12 @@
 </header>
 <main>
   <p class="summary" id="summary"></p>
-  <p class="path">Path: model/version/fast|none/YYYYMMDD/language/name.unix.html</p>
+  <p class="path">Path: model/version/speed/YYYYMMDD/language/name.unix.html</p>
   <section id="all">
     <h2>All tests</h2>
     <div class="tools">
       <label for="q">Filter</label>
-      <input id="q" type="search" placeholder="Model, version, thinking, date, language, or test" autocomplete="off">
+      <input id="q" type="search" placeholder="Model, version, speed, date, language, or test" autocomplete="off">
       <button type="button" id="clear">Clear</button>
     </div>
     <p id="filterState" class="path"></p>
@@ -152,7 +152,7 @@
           <tr>
             <th><button type="button" data-key="model">Model</button></th>
             <th><button type="button" data-key="version">Version</button></th>
-            <th><button type="button" data-key="thinking">Thinking</button></th>
+            <th><button type="button" data-key="speed">Speed</button></th>
             <th><button type="button" data-key="date">Date</button></th>
             <th><button type="button" data-key="language">Language</button></th>
             <th><button type="button" data-key="name">Test</button></th>
@@ -173,7 +173,7 @@
     {
       model: "Grok",
       version: "4.7",
-      thinking: "none",
+      speed: "none",
       date: "20260922",
       language: "zh",
       name: "秦始皇在现代流水线上打螺丝",
@@ -183,7 +183,7 @@
     {
       model: "Grok",
       version: "4.7",
-      thinking: "none",
+      speed: "none",
       date: "20260922",
       language: "zh",
       name: "鹈鹕骑自行车",
@@ -194,8 +194,8 @@
 
   var sortKey = "model";
   var sortDir = 1;
-  var facetKeys = ["model", "version", "thinking", "date", "language"];
-  var facets = { model: [], version: [], thinking: [], date: [], language: [] };
+  var facetKeys = ["model", "version", "speed", "date", "language"];
+  var facets = { model: [], version: [], speed: [], date: [], language: [] };
   var q = document.getElementById("q");
   var rows = document.getElementById("rows");
   var empty = document.getElementById("empty");
@@ -235,7 +235,7 @@
     if (sortKey === "version") result = compareVersion(a.version, b.version);
     else if (sortKey === "date") result = Number(a.date) - Number(b.date);
     else result = String(a[sortKey]).localeCompare(String(b[sortKey]), "zh");
-    if (result === 0) result = a.model.localeCompare(b.model, "en") || compareVersion(a.version, b.version) || a.thinking.localeCompare(b.thinking, "en") || (Number(a.date) - Number(b.date)) || a.language.localeCompare(b.language, "en") || a.name.localeCompare(b.name, "zh");
+    if (result === 0) result = a.model.localeCompare(b.model, "en") || compareVersion(a.version, b.version) || a.speed.localeCompare(b.speed, "en") || (Number(a.date) - Number(b.date)) || a.language.localeCompare(b.language, "en") || a.name.localeCompare(b.name, "zh");
     return result * sortDir;
   }
 
@@ -264,7 +264,7 @@
     return tests.filter(function (item) {
       if (!matchesFacets(item)) return false;
       if (!text) return true;
-      return (item.model + " " + item.version + " " + item.thinking + " " + item.date + " " + item.language + " " + item.name + " " + item.href).toLowerCase().indexOf(text) !== -1;
+      return (item.model + " " + item.version + " " + item.speed + " " + item.date + " " + item.language + " " + item.name + " " + item.href).toLowerCase().indexOf(text) !== -1;
     }).sort(compare);
   }
 
@@ -278,7 +278,7 @@
     rows.innerHTML = "";
     list.forEach(function (item) {
       var tr = document.createElement("tr");
-      ["model", "version", "thinking", "date", "language", "name"].forEach(function (key) {
+      ["model", "version", "speed", "date", "language", "name"].forEach(function (key) {
         var td = document.createElement("td");
         if (facets[key]) {
           var facet = document.createElement("button");
@@ -317,14 +317,14 @@
     empty.hidden = list.length !== 0;
     var chosen = [];
     facetKeys.forEach(function (key) {
-      var label = { model: "Model", version: "Version", thinking: "Thinking", date: "Date", language: "Language" }[key];
+      var label = { model: "Model", version: "Version", speed: "Speed", date: "Date", language: "Language" }[key];
       facets[key].forEach(function (value) { chosen.push(label + " = " + value); });
     });
     if (text) chosen.push("Text = " + text);
     filterState.textContent = chosen.length ? chosen.join(", ") : "Showing all";
     document.querySelectorAll("th button").forEach(function (button) {
       var key = button.getAttribute("data-key");
-      var label = { model: "Model", version: "Version", thinking: "Thinking", date: "Date", language: "Language", name: "Test" }[key];
+      var label = { model: "Model", version: "Version", speed: "Speed", date: "Date", language: "Language", name: "Test" }[key];
       var mark = key === sortKey ? (sortDir > 0 ? " ↑" : " ↓") : "";
       button.textContent = label + mark;
       button.parentElement.setAttribute("aria-sort", key === sortKey ? (sortDir > 0 ? "ascending" : "descending") : "none");
@@ -344,9 +344,9 @@
         version = { version: item.version, levels: [] };
         model.versions.push(version);
       }
-      var level = version.levels.find(function (entry) { return entry.thinking === item.thinking; });
+      var level = version.levels.find(function (entry) { return entry.speed === item.speed; });
       if (!level) {
-        level = { thinking: item.thinking, dates: [] };
+        level = { speed: item.speed, dates: [] };
         version.levels.push(level);
       }
       var day = level.dates.find(function (entry) { return entry.date === item.date; });
@@ -365,7 +365,7 @@
     models.forEach(function (model) {
       model.versions.sort(function (a, b) { return compareVersion(a.version, b.version); });
       model.versions.forEach(function (version) {
-        version.levels.sort(function (a, b) { return a.thinking.localeCompare(b.thinking, "en"); });
+        version.levels.sort(function (a, b) { return a.speed.localeCompare(b.speed, "en"); });
         version.levels.forEach(function (level) {
         level.dates.sort(function (a, b) { return Number(a.date) - Number(b.date); });
         level.dates.forEach(function (day) {
@@ -403,7 +403,7 @@
         block.appendChild(heading);
         version.levels.forEach(function (level) {
         var levelTitle = document.createElement("h4");
-        levelTitle.textContent = level.thinking;
+        levelTitle.textContent = level.speed;
         block.appendChild(levelTitle);
         level.dates.forEach(function (day) {
           var dayTitle = document.createElement("h4");
