@@ -52,7 +52,7 @@
   nav, #nav { display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: center; }
   nav a, h1 a { color: var(--gold); text-decoration: none; }
   nav a:hover, nav a:focus-visible, h1 a:hover, h1 a:focus-visible { text-decoration: underline; }
-  main { max-width: 1080px; margin: 0 auto; padding: 20px 24px 48px; }
+  main { width: 100%; max-width: none; margin: 0; padding: 20px 28px 48px; }
   .summary { margin: 0 0 16px; color: var(--muted); }
   .tools {
     display: flex;
@@ -159,7 +159,6 @@
             <th><button type="button" data-key="date">Date</button></th>
             <th><button type="button" data-key="language">Language</button></th>
             <th><button type="button" data-key="name">Test</button></th>
-            <th>Open</th>
           </tr>
         </thead>
         <tbody id="rows"></tbody>
@@ -302,7 +301,21 @@
       var tr = document.createElement("tr");
       ["model", "version", "depth", "speed", "source", "driver", "date", "language", "name"].forEach(function (key) {
         var td = document.createElement("td");
-        if (facets[key]) {
+        if (key === "name") {
+          var title = document.createElement("a");
+          title.href = item.href;
+          title.textContent = item[key];
+          td.appendChild(title);
+          if (item.record) {
+            td.appendChild(document.createTextNode(" "));
+            var record = document.createElement("a");
+            record.href = /^https?:\/\//.test(item.record)
+              ? item.record
+              : "https://github.com/lian-yue/agents-tests/blob/main/" + item.record.replace(/^\//, "");
+            record.textContent = "Record";
+            td.appendChild(record);
+          }
+        } else if (facets[key]) {
           var facet = document.createElement("button");
           facet.type = "button";
           facet.className = "facet";
@@ -315,25 +328,6 @@
         }
         tr.appendChild(td);
       });
-      var linkTd = document.createElement("td");
-      var link = document.createElement("a");
-      link.href = item.href;
-      link.textContent = "Open";
-      linkTd.appendChild(link);
-      if (item.record) {
-        linkTd.appendChild(document.createTextNode(" "));
-        var record = document.createElement("a");
-        record.href = /^https?:\/\//.test(item.record)
-          ? item.record
-          : "https://github.com/lian-yue/agents-tests/blob/main/" + item.record.replace(/^\//, "");
-        record.textContent = "Record";
-        linkTd.appendChild(record);
-      }
-      var path = document.createElement("div");
-      path.className = "path";
-      path.textContent = item.href;
-      linkTd.appendChild(path);
-      tr.appendChild(linkTd);
       rows.appendChild(tr);
     });
     empty.hidden = list.length !== 0;
