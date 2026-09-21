@@ -2,7 +2,7 @@
 
 - Model: Grok
 - Version: 4.7
-- Thinking: none
+- Speed: none
 - Date: 20260922
 - Language: zh
 - Rounds: 2
