@@ -164,7 +164,7 @@
       language: "zh",
       name: "秦始皇在现代流水线上打螺丝",
       href: "grok/4.7/20260922/zh/qin-shihuang-assembly.1790011920.html",
-      record: "grok/4.7/20260922/zh/qin-shihuang-assembly.1790011920.md"
+      record: "https://github.com/lian-yue/agents-tests/blob/main/grok/4.7/20260922/zh/qin-shihuang-assembly.1790011920.md"
     }
   ];
 
@@ -244,7 +244,9 @@
       if (item.record) {
         linkTd.appendChild(document.createTextNode(" "));
         var record = document.createElement("a");
-        record.href = item.record;
+        record.href = /^https?:\/\//.test(item.record)
+          ? item.record
+          : "https://github.com/lian-yue/agents-tests/blob/main/" + item.record.replace(/^\//, "");
         record.textContent = "Record";
         linkTd.appendChild(record);
       }
