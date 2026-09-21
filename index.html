@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>测试索引</title>
+<title>Test index</title>
 <style>
   :root {
     color-scheme: light;
@@ -117,34 +117,36 @@
 </head>
 <body>
 <header>
-  <h1>测试索引<small id="lead">按模型、版本、日期列出全部测试</small></h1>
+  <h1>Test index<small id="lead">Every model, version, date, and test</small></h1>
   <nav id="nav" aria-label="页面"></nav>
 </header>
 <main>
   <p class="summary" id="summary"></p>
+  <p class="path">Path: model/version/YYYYMMDD/language/name.unix.html</p>
   <section id="all">
-    <h2>全部测试</h2>
+    <h2>All tests</h2>
     <div class="tools">
-      <label for="q">过滤</label>
-      <input id="q" type="search" placeholder="模型、版本、日期或测试名称" autocomplete="off">
-      <button type="button" id="clear">清除</button>
+      <label for="q">Filter</label>
+      <input id="q" type="search" placeholder="Model, version, date, language, or test" autocomplete="off">
+      <button type="button" id="clear">Clear</button>
       <span id="filterState" class="path"></span>
     </div>
     <div class="table-wrap">
       <table>
         <thead>
           <tr>
-            <th><button type="button" data-key="model">模型</button></th>
-            <th><button type="button" data-key="version">版本</button></th>
-            <th><button type="button" data-key="date">日期</button></th>
-            <th><button type="button" data-key="name">测试</button></th>
-            <th>打开</th>
+            <th><button type="button" data-key="model">Model</button></th>
+            <th><button type="button" data-key="version">Version</button></th>
+            <th><button type="button" data-key="date">Date</button></th>
+            <th><button type="button" data-key="language">Language</button></th>
+            <th><button type="button" data-key="name">Test</button></th>
+            <th>Open</th>
           </tr>
         </thead>
         <tbody id="rows"></tbody>
       </table>
     </div>
-    <p class="empty" id="empty" hidden>没有匹配的测试。</p>
+    <p class="empty" id="empty" hidden>No matching tests.</p>
   </section>
   <div id="groups"></div>
 </main>
@@ -156,9 +158,10 @@
       model: "Grok",
       version: "4.7",
       date: "20260922",
+      language: "zh",
       name: "秦始皇在现代流水线上打螺丝",
-      href: "grok/4.7/20260922/qin-shihuang-assembly.1790011920.html",
-      record: "grok/4.7/20260922/qin-shihuang-assembly.1790011920.md"
+      href: "grok/4.7/20260922/zh/qin-shihuang-assembly.1790011920.html",
+      record: "grok/4.7/20260922/zh/qin-shihuang-assembly.1790011920.md"
     }
   ];
 
@@ -203,7 +206,7 @@
     if (sortKey === "version") result = compareVersion(a.version, b.version);
     else if (sortKey === "date") result = Number(a.date) - Number(b.date);
     else result = String(a[sortKey]).localeCompare(String(b[sortKey]), "zh");
-    if (result === 0) result = a.model.localeCompare(b.model, "zh") || compareVersion(a.version, b.version) || (Number(a.date) - Number(b.date)) || a.name.localeCompare(b.name, "zh");
+    if (result === 0) result = a.model.localeCompare(b.model, "en") || compareVersion(a.version, b.version) || (Number(a.date) - Number(b.date)) || a.language.localeCompare(b.language, "en") || a.name.localeCompare(b.name, "zh");
     return result * sortDir;
   }
 
@@ -211,7 +214,7 @@
     var text = q.value.trim().toLowerCase();
     return tests.filter(function (item) {
       if (!text) return true;
-      return (item.model + " " + item.version + " " + item.date + " " + item.name + " " + item.href).toLowerCase().indexOf(text) !== -1;
+      return (item.model + " " + item.version + " " + item.date + " " + item.language + " " + item.name + " " + item.href).toLowerCase().indexOf(text) !== -1;
     }).sort(compare);
   }
 
@@ -225,7 +228,7 @@
     rows.innerHTML = "";
     list.forEach(function (item) {
       var tr = document.createElement("tr");
-      [item.model, item.version, item.date, item.name].forEach(function (value) {
+      [item.model, item.version, item.date, item.language, item.name].forEach(function (value) {
         var td = document.createElement("td");
         td.textContent = value;
         tr.appendChild(td);
@@ -233,13 +236,13 @@
       var linkTd = document.createElement("td");
       var link = document.createElement("a");
       link.href = item.href;
-      link.textContent = "进入";
+      link.textContent = "Open";
       linkTd.appendChild(link);
       if (item.record) {
         linkTd.appendChild(document.createTextNode(" "));
         var record = document.createElement("a");
         record.href = item.record;
-        record.textContent = "记录";
+        record.textContent = "Record";
         linkTd.appendChild(record);
       }
       var path = document.createElement("div");
@@ -250,10 +253,10 @@
       rows.appendChild(tr);
     });
     empty.hidden = list.length !== 0;
-    filterState.textContent = text ? "当前过滤：" + text : "当前显示全部";
+    filterState.textContent = text ? "Filter: " + text : "Showing all";
     document.querySelectorAll("th button").forEach(function (button) {
       var key = button.getAttribute("data-key");
-      var label = { model: "模型", version: "版本", date: "日期", name: "测试" }[key];
+      var label = { model: "Model", version: "Version", date: "Date", language: "Language", name: "Test" }[key];
       var mark = key === sortKey ? (sortDir > 0 ? " ↑" : " ↓") : "";
       button.textContent = label + mark;
       button.parentElement.setAttribute("aria-sort", key === sortKey ? (sortDir > 0 ? "ascending" : "descending") : "none");
@@ -275,10 +278,15 @@
       }
       var day = version.dates.find(function (entry) { return entry.date === item.date; });
       if (!day) {
-        day = { date: item.date, items: [] };
+        day = { date: item.date, languages: [] };
         version.dates.push(day);
       }
-      day.items.push(item);
+      var language = day.languages.find(function (entry) { return entry.language === item.language; });
+      if (!language) {
+        language = { language: item.language, items: [] };
+        day.languages.push(language);
+      }
+      language.items.push(item);
     });
     models.sort(function (a, b) { return a.model.localeCompare(b.model, "zh"); });
     models.forEach(function (model) {
@@ -286,19 +294,22 @@
       model.versions.forEach(function (version) {
         version.dates.sort(function (a, b) { return Number(a.date) - Number(b.date); });
         version.dates.forEach(function (day) {
-          day.items.sort(function (a, b) { return a.name.localeCompare(b.name, "zh"); });
+          day.languages.sort(function (a, b) { return a.language.localeCompare(b.language, "en"); });
+          day.languages.forEach(function (language) {
+            language.items.sort(function (a, b) { return a.name.localeCompare(b.name, "zh"); });
+          });
         });
       });
     });
 
     var modelCount = models.length;
     var versionCount = models.reduce(function (sum, model) { return sum + model.versions.length; }, 0);
-    summary.textContent = "共 " + modelCount + " 个模型，" + versionCount + " 个版本，" + tests.length + " 个测试。";
+    summary.textContent = modelCount + " model" + (modelCount === 1 ? "" : "s") + ", " + versionCount + " version" + (versionCount === 1 ? "" : "s") + ", " + tests.length + " test" + (tests.length === 1 ? "" : "s") + ".";
 
     nav.innerHTML = "";
     var all = document.createElement("a");
     all.href = "#all";
-    all.textContent = "全部测试";
+    all.textContent = "All tests";
     nav.appendChild(all);
     models.forEach(function (model) {
       var link = document.createElement("a");
@@ -323,17 +334,23 @@
         version.dates.forEach(function (day) {
           var dayTitle = document.createElement("h4");
           dayTitle.textContent = day.date;
-          var list = document.createElement("ul");
-          day.items.forEach(function (item) {
-            var li = document.createElement("li");
-            var link = document.createElement("a");
-            link.href = item.href;
-            link.textContent = item.name;
-            li.appendChild(link);
-            list.appendChild(li);
-          });
           block.appendChild(dayTitle);
-          block.appendChild(list);
+          day.languages.forEach(function (language) {
+            var langTitle = document.createElement("p");
+            langTitle.className = "path";
+            langTitle.textContent = language.language;
+            var list = document.createElement("ul");
+            language.items.forEach(function (item) {
+              var li = document.createElement("li");
+              var link = document.createElement("a");
+              link.href = item.href;
+              link.textContent = item.name;
+              li.appendChild(link);
+              list.appendChild(li);
+            });
+            block.appendChild(langTitle);
+            block.appendChild(list);
+          });
         });
         section.appendChild(block);
       });
