@@ -1,5 +1,7 @@
 # agents-tests
 
+Open the index: https://lian-yue.github.io/agents-tests/
+
 A catalog of tests from different models and versions. The home page lists every test and links straight to it.
 
 ## About
