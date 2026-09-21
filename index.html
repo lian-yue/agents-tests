@@ -99,6 +99,15 @@
     font-weight: 650;
     cursor: pointer;
   }
+  td button.facet {
+    padding: 2px 8px;
+    border-radius: 999px;
+    background: transparent;
+  }
+  td button.facet[aria-pressed="true"] {
+    background: var(--gold-soft);
+    border-color: var(--gold);
+  }
   tr:last-child td { border-bottom: 0; }
   td a { color: var(--gold); }
   .empty { margin: 12px 0 0; color: var(--muted); }
@@ -170,6 +179,8 @@
 
   var sortKey = "model";
   var sortDir = 1;
+  var facetKeys = ["model", "version", "date", "language"];
+  var facets = { model: [], version: [], date: [], language: [] };
   var q = document.getElementById("q");
   var rows = document.getElementById("rows");
   var empty = document.getElementById("empty");
@@ -213,9 +224,30 @@
     return result * sortDir;
   }
 
+  function facetOn(key, value) {
+    return facets[key].indexOf(value) !== -1;
+  }
+
+  function toggleFacet(key, value) {
+    var list = facets[key];
+    var index = list.indexOf(value);
+    if (index === -1) list.push(value);
+    else list.splice(index, 1);
+    render();
+  }
+
+  function matchesFacets(item) {
+    for (var i = 0; i < facetKeys.length; i++) {
+      var key = facetKeys[i];
+      if (facets[key].length && facets[key].indexOf(item[key]) === -1) return false;
+    }
+    return true;
+  }
+
   function filtered() {
     var text = q.value.trim().toLowerCase();
     return tests.filter(function (item) {
+      if (!matchesFacets(item)) return false;
       if (!text) return true;
       return (item.model + " " + item.version + " " + item.date + " " + item.language + " " + item.name + " " + item.href).toLowerCase().indexOf(text) !== -1;
     }).sort(compare);
@@ -231,9 +263,19 @@
     rows.innerHTML = "";
     list.forEach(function (item) {
       var tr = document.createElement("tr");
-      [item.model, item.version, item.date, item.language, item.name].forEach(function (value) {
+      ["model", "version", "date", "language", "name"].forEach(function (key) {
         var td = document.createElement("td");
-        td.textContent = value;
+        if (facets[key]) {
+          var facet = document.createElement("button");
+          facet.type = "button";
+          facet.className = "facet";
+          facet.textContent = item[key];
+          facet.setAttribute("aria-pressed", facetOn(key, item[key]) ? "true" : "false");
+          facet.addEventListener("click", function () { toggleFacet(key, item[key]); });
+          td.appendChild(facet);
+        } else {
+          td.textContent = item[key];
+        }
         tr.appendChild(td);
       });
       var linkTd = document.createElement("td");
@@ -258,7 +300,13 @@
       rows.appendChild(tr);
     });
     empty.hidden = list.length !== 0;
-    filterState.textContent = text ? "Filter: " + text : "Showing all";
+    var chosen = [];
+    facetKeys.forEach(function (key) {
+      var label = { model: "Model", version: "Version", date: "Date", language: "Language" }[key];
+      facets[key].forEach(function (value) { chosen.push(label + " = " + value); });
+    });
+    if (text) chosen.push("Text = " + text);
+    filterState.textContent = chosen.length ? chosen.join(", ") : "Showing all";
     document.querySelectorAll("th button").forEach(function (button) {
       var key = button.getAttribute("data-key");
       var label = { model: "Model", version: "Version", date: "Date", language: "Language", name: "Test" }[key];
@@ -316,12 +364,6 @@
     all.href = "#all";
     all.textContent = "All tests";
     nav.appendChild(all);
-    models.forEach(function (model) {
-      var link = document.createElement("a");
-      link.href = "#model-" + slug(model.model);
-      link.textContent = model.model;
-      nav.appendChild(link);
-    });
 
     groups.innerHTML = "";
     models.forEach(function (model) {
@@ -377,6 +419,7 @@
   q.addEventListener("input", render);
   document.getElementById("clear").addEventListener("click", function () {
     q.value = "";
+    facetKeys.forEach(function (key) { facets[key] = []; });
     render();
     q.focus();
   });
