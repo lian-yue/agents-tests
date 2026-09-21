@@ -26,13 +26,13 @@ model/version/depth/speed/source/driver/YYYYMMDD/language/name.unix.md
 Example:
 
 ```
-grok/4.7/high/normal/subscription/grokbuild/20260922/zh/qin-shihuang-assembly.1790011920.html
-grok/4.7/high/normal/subscription/grokbuild/20260922/zh/qin-shihuang-assembly.1790011920.md
+grok/4.7/xhigh/fast/subscription/grokbuild/20260922/zh/qin-shihuang-assembly.1790011920.html
+grok/4.7/xhigh/fast/subscription/grokbuild/20260922/zh/qin-shihuang-assembly.1790011920.md
 ```
 
-- `model` and `version` are the real names, such as `grok/4.7`.
-- `depth` is how deeply the model thought. The set can grow. Examples: `none`, `low`, `high`.
-- `speed` is whether the run was fast. Use `normal` for 普通 and `fast` for 快速. A faster level can be added later as `ultra` (超快速). Do not use `none` for speed.
+- `model` and `version` are the real names, such as `grok/4.7`. Read them from the session, for example `grok-4.7-build-fast` is model `grok`, version `4.7`, speed `fast`.
+- `depth` is how deeply the model thought. The set can grow. Examples: `none`, `low`, `high`, `xhigh`.
+- `speed` is the speed level: `normal` for 普通, `fast` for 快速. A faster level can be added later as `ultra` (超快速). Do not use `none` for speed.
 - `source` is where the run came from, such as `subscription`, `api`, or the name of a relay.
 - `driver` is the harness, such as `grokbuild`, `chatgpt`, or `deepseek-harness`.
 - The date directory is `YYYYMMDD`, exact to the day, such as `20260922`. Do not use Chinese date words or English month names.
