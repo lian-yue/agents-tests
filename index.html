@@ -109,6 +109,7 @@
   }
   h2 { margin: 0 0 8px; font-size: 22px; }
   h3 { margin: 16px 0 8px; font-size: 16px; color: var(--muted); }
+  h4 { margin: 12px 0 6px; font-size: 14px; font-weight: 600; }
   ul { margin: 0; padding-left: 18px; }
   li { margin: 6px 0; }
   .path { color: var(--muted); font-size: 12px; }
@@ -116,7 +117,7 @@
 </head>
 <body>
 <header>
-  <h1>测试索引<small id="lead">按模型、版本列出全部测试</small></h1>
+  <h1>测试索引<small id="lead">按模型、版本、日期列出全部测试</small></h1>
   <nav id="nav" aria-label="页面"></nav>
 </header>
 <main>
@@ -125,7 +126,7 @@
     <h2>全部测试</h2>
     <div class="tools">
       <label for="q">过滤</label>
-      <input id="q" type="search" placeholder="模型、版本或测试名称" autocomplete="off">
+      <input id="q" type="search" placeholder="模型、版本、日期或测试名称" autocomplete="off">
       <button type="button" id="clear">清除</button>
       <span id="filterState" class="path"></span>
     </div>
@@ -135,6 +136,7 @@
           <tr>
             <th><button type="button" data-key="model">模型</button></th>
             <th><button type="button" data-key="version">版本</button></th>
+            <th><button type="button" data-key="date">日期</button></th>
             <th><button type="button" data-key="name">测试</button></th>
             <th>打开</th>
           </tr>
@@ -153,8 +155,10 @@
     {
       model: "Grok",
       version: "4.7",
+      date: "20260922",
       name: "秦始皇在现代流水线上打螺丝",
-      href: "grok/4.7/qin-shihuang-assembly.html"
+      href: "grok/4.7/20260922/qin-shihuang-assembly.1790011920.html",
+      record: "grok/4.7/20260922/qin-shihuang-assembly.1790011920.md"
     }
   ];
 
@@ -197,8 +201,9 @@
   function compare(a, b) {
     var result = 0;
     if (sortKey === "version") result = compareVersion(a.version, b.version);
+    else if (sortKey === "date") result = Number(a.date) - Number(b.date);
     else result = String(a[sortKey]).localeCompare(String(b[sortKey]), "zh");
-    if (result === 0) result = a.model.localeCompare(b.model, "zh") || compareVersion(a.version, b.version) || a.name.localeCompare(b.name, "zh");
+    if (result === 0) result = a.model.localeCompare(b.model, "zh") || compareVersion(a.version, b.version) || (Number(a.date) - Number(b.date)) || a.name.localeCompare(b.name, "zh");
     return result * sortDir;
   }
 
@@ -206,7 +211,7 @@
     var text = q.value.trim().toLowerCase();
     return tests.filter(function (item) {
       if (!text) return true;
-      return (item.model + " " + item.version + " " + item.name + " " + item.href).toLowerCase().indexOf(text) !== -1;
+      return (item.model + " " + item.version + " " + item.date + " " + item.name + " " + item.href).toLowerCase().indexOf(text) !== -1;
     }).sort(compare);
   }
 
@@ -220,7 +225,7 @@
     rows.innerHTML = "";
     list.forEach(function (item) {
       var tr = document.createElement("tr");
-      [item.model, item.version, item.name].forEach(function (value) {
+      [item.model, item.version, item.date, item.name].forEach(function (value) {
         var td = document.createElement("td");
         td.textContent = value;
         tr.appendChild(td);
@@ -230,6 +235,13 @@
       link.href = item.href;
       link.textContent = "进入";
       linkTd.appendChild(link);
+      if (item.record) {
+        linkTd.appendChild(document.createTextNode(" "));
+        var record = document.createElement("a");
+        record.href = item.record;
+        record.textContent = "记录";
+        linkTd.appendChild(record);
+      }
       var path = document.createElement("div");
       path.className = "path";
       path.textContent = item.href;
@@ -241,7 +253,7 @@
     filterState.textContent = text ? "当前过滤：" + text : "当前显示全部";
     document.querySelectorAll("th button").forEach(function (button) {
       var key = button.getAttribute("data-key");
-      var label = { model: "模型", version: "版本", name: "测试" }[key];
+      var label = { model: "模型", version: "版本", date: "日期", name: "测试" }[key];
       var mark = key === sortKey ? (sortDir > 0 ? " ↑" : " ↓") : "";
       button.textContent = label + mark;
       button.parentElement.setAttribute("aria-sort", key === sortKey ? (sortDir > 0 ? "ascending" : "descending") : "none");
@@ -258,16 +270,24 @@
       }
       var version = model.versions.find(function (entry) { return entry.version === item.version; });
       if (!version) {
-        version = { version: item.version, items: [] };
+        version = { version: item.version, dates: [] };
         model.versions.push(version);
       }
-      version.items.push(item);
+      var day = version.dates.find(function (entry) { return entry.date === item.date; });
+      if (!day) {
+        day = { date: item.date, items: [] };
+        version.dates.push(day);
+      }
+      day.items.push(item);
     });
     models.sort(function (a, b) { return a.model.localeCompare(b.model, "zh"); });
     models.forEach(function (model) {
       model.versions.sort(function (a, b) { return compareVersion(a.version, b.version); });
       model.versions.forEach(function (version) {
-        version.items.sort(function (a, b) { return a.name.localeCompare(b.name, "zh"); });
+        version.dates.sort(function (a, b) { return Number(a.date) - Number(b.date); });
+        version.dates.forEach(function (day) {
+          day.items.sort(function (a, b) { return a.name.localeCompare(b.name, "zh"); });
+        });
       });
     });
 
@@ -299,17 +319,22 @@
         block.id = section.id + "-" + slug(version.version);
         var heading = document.createElement("h3");
         heading.textContent = version.version;
-        var list = document.createElement("ul");
-        version.items.forEach(function (item) {
-          var li = document.createElement("li");
-          var link = document.createElement("a");
-          link.href = item.href;
-          link.textContent = item.name;
-          li.appendChild(link);
-          list.appendChild(li);
-        });
         block.appendChild(heading);
-        block.appendChild(list);
+        version.dates.forEach(function (day) {
+          var dayTitle = document.createElement("h4");
+          dayTitle.textContent = day.date;
+          var list = document.createElement("ul");
+          day.items.forEach(function (item) {
+            var li = document.createElement("li");
+            var link = document.createElement("a");
+            link.href = item.href;
+            link.textContent = item.name;
+            li.appendChild(link);
+            list.appendChild(li);
+          });
+          block.appendChild(dayTitle);
+          block.appendChild(list);
+        });
         section.appendChild(block);
       });
       groups.appendChild(section);
