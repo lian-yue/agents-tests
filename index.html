@@ -49,9 +49,9 @@
     letter-spacing: 0;
     font-weight: 400;
   }
-  nav { display: flex; flex-wrap: wrap; gap: 8px 14px; }
-  nav a { color: var(--gold); text-decoration: none; }
-  nav a:hover, nav a:focus-visible { text-decoration: underline; }
+  nav, #nav { display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: center; }
+  nav a, h1 a { color: var(--gold); text-decoration: none; }
+  nav a:hover, nav a:focus-visible, h1 a:hover, h1 a:focus-visible { text-decoration: underline; }
   main { max-width: 1080px; margin: 0 auto; padding: 20px 24px 48px; }
   .summary { margin: 0 0 16px; color: var(--muted); }
   .tools {
@@ -117,8 +117,11 @@
 </head>
 <body>
 <header>
-  <h1>Test index<small id="lead">Every model, version, date, and test</small></h1>
-  <nav id="nav" aria-label="页面"></nav>
+  <h1><a href="https://github.com/lian-yue/agents-tests">agents-tests</a><small id="lead">Every model, version, date, and test</small></h1>
+  <nav aria-label="Page">
+    <a href="https://github.com/lian-yue/agents-tests">Repository</a>
+    <span id="nav"></span>
+  </nav>
 </header>
 <main>
   <p class="summary" id="summary"></p>
@@ -306,7 +309,7 @@
     var versionCount = models.reduce(function (sum, model) { return sum + model.versions.length; }, 0);
     summary.textContent = modelCount + " model" + (modelCount === 1 ? "" : "s") + ", " + versionCount + " version" + (versionCount === 1 ? "" : "s") + ", " + tests.length + " test" + (tests.length === 1 ? "" : "s") + ".";
 
-    nav.innerHTML = "";
+    nav.replaceChildren();
     var all = document.createElement("a");
     all.href = "#all";
     all.textContent = "All tests";
